@@ -130,6 +130,7 @@ namespace SecurityLibrary
             string newkey = new string(newkey1.Distinct().ToArray());
             int row = 0;
             int col = 0;
+            //Done
             string alpha = "abcdefghiklmnopqrstuvwxyz";
            
             for (int i=0;i<newkey.Length;i++)
