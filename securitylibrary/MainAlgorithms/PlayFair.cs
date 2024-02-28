@@ -247,7 +247,7 @@ namespace SecurityLibrary
                 }
             }
             
-             return cipher.ToLower();
+             return cipher.ToUpper();
         }
         public char[,] matrixinit(string key)
         {
@@ -300,12 +300,9 @@ namespace SecurityLibrary
                             }
                         
                         }
-                    
-
                 }
 
             }
-
             return newmat;
         }
     }
