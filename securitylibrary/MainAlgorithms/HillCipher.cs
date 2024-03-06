@@ -28,61 +28,124 @@ namespace SecurityLibrary
             //int[,] Cipher2d = new int[cipherText.Count/3, 3];
 
             int step_size,det;
+
             if (key.Count == 4)
-                det = key[0]*key[3]-key[1]*key[2];
+                step_size = 2;
+            else
+                step_size = 3;
+
+            #region DetAndInverse
+            if (key.Count == 4)
+                det = key[0] * key[3] - key[1] * key[2];
             else
             {
-                det= key[0] * (key[4] * key[8] - key[5] * key[7])
-                    -key[1] * (key[3] * key[8] - key[5] * key[6])
-                    +key[2] * (key[3] * key[7] - key[4] * key[6]);
-                
+                det = key[0] * (key[4] * key[8] - key[5] * key[7])
+                    - key[1] * (key[3] * key[8] - key[5] * key[6])
+                    + key[2] * (key[3] * key[7] - key[4] * key[6]);
+
             }
-            det %= 26;
+            det = ((det % 26) + 26) % 26;
             Console.WriteLine(det);
             int inverse = InverseFinder(det);
             Console.WriteLine(inverse);
-            for(int i=0;i<3;i++)
-            {
-                for(int j=0;j<3; j++)
-                {
-                    int pow = i + j;
-                    if (pow % 2 == 0)
-                        pow = 1;
-                    else
-                        pow = -1;
+            #endregion
 
-                    int detHere = getDet(key, i, j);
-                    InverseKeyMatrix[i,j]=((inverse*pow*detHere)%26);
-                        
+            if (step_size==3)
+            {
+
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        int pow = i + j;
+                        if (pow % 2 == 0)
+                            pow = 1;
+                        else
+                            pow = -1;
+
+                        int detHere = getDet(key, i, j);
+                        // InverseKeyMatrix[i,j]=((inverse*pow*detHere)%26);
+                        int Eq = inverse * pow * detHere;
+                        InverseKeyMatrix[i, j] = ((Eq % 26) + 26) % 26;
+
+                    }
+                }
+
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        InverseKeyMatrixTrans[i, j] = InverseKeyMatrix[j, i];
+                        Console.Write($"{InverseKeyMatrixTrans[i, j]} ");
+                    }
+                    Console.WriteLine();
+
+                }
+
+                for (int i = 0; i < cipherText.Count; i += 3)
+                {
+                    result.Add((cipherText[i] * InverseKeyMatrixTrans[0, 0]
+                        + cipherText[i + 1] * InverseKeyMatrixTrans[0, 1]
+                        + cipherText[i + 2] * InverseKeyMatrixTrans[0, 2]) % 26);
+
+                    result.Add((cipherText[i] * InverseKeyMatrixTrans[1, 0]
+                        + cipherText[i + 1] * InverseKeyMatrixTrans[1, 1]
+                        + cipherText[i + 2] * InverseKeyMatrixTrans[1, 2]) % 26);
+
+                    result.Add((cipherText[i] * InverseKeyMatrixTrans[2, 0]
+                        + cipherText[i + 1] * InverseKeyMatrixTrans[2, 1]
+                        + cipherText[i + 2] * InverseKeyMatrixTrans[2, 2]) % 26);
+                } 
+            }
+            else
+            {
+                int idx = 3;
+
+                for (int i = 0; i < 2; i++)
+                {
+                    for (int j = 0; j < 2; j++)
+                    {
+                        int pow = i + j;
+                        if (pow % 2 == 0)
+                            pow = 1;
+                        else
+                            pow = -1;
+
+                        //int detHere = getDet(key, i, j);
+                        // InverseKeyMatrix[i,j]=((inverse*pow*detHere)%26);
+                        int Eq = inverse *key[idx] *pow;
+                        //Console.WriteLine($"{Eq} ");
+                        InverseKeyMatrix[i, j] = ((Eq % 26) + 26) % 26;
+                        idx--;
+                    }
+                }
+
+                for (int i = 0; i < 2; i++)
+                {
+                    for (int j = 0; j <2 ; j++)
+                    {
+                        InverseKeyMatrixTrans[i, j] = InverseKeyMatrix[j, i];
+                        Console.Write($"{InverseKeyMatrixTrans[i, j]} ");
+                    }
+                    Console.WriteLine();
+
+                }
+
+                for (int i = 0; i < cipherText.Count; i += 2)
+                {
+                    result.Add((cipherText[i] * InverseKeyMatrixTrans[0, 0]
+                        + cipherText[i + 1] * InverseKeyMatrixTrans[0, 1]
+                        ) % 26);
+
+                    result.Add((cipherText[i] * InverseKeyMatrixTrans[1, 0]
+                        + cipherText[i + 1] * InverseKeyMatrixTrans[1, 1]
+                        ) % 26);
+
+                   
                 }
             }
-
-            for(int i=0;i<3;i++)
-            {
-                for(int j=0;j<3;j++)
-                {
-                    InverseKeyMatrixTrans[i, j] = InverseKeyMatrix[j,i];
-                    Console.Write($"{InverseKeyMatrix[i,j]} ");
-                }
-                Console.WriteLine();
-            }
-
-            for(int i=0;i<cipherText.Count;i+=3)
-            {
-                result.Add(cipherText[i] * InverseKeyMatrixTrans[0, 0]
-                    + cipherText[i + 1] * InverseKeyMatrixTrans[0, 1]
-                    + cipherText[i + 2] * InverseKeyMatrixTrans[0, 2]);
-
-                result.Add(cipherText[i] * InverseKeyMatrixTrans[1, 0]
-                    + cipherText[i + 1] * InverseKeyMatrixTrans[1, 1]
-                    + cipherText[i + 2] * InverseKeyMatrixTrans[1, 2]);
-
-                result.Add(cipherText[i] * InverseKeyMatrixTrans[2, 0]
-                    + cipherText[i + 1] * InverseKeyMatrixTrans[2, 1]
-                    + cipherText[i + 2] * InverseKeyMatrixTrans[2, 2]);
-            }
-            //foreach(var x in result)
-            //    Console.Write($"{x} ");
+            foreach (var x in result)
+                Console.Write($"{x} ");
             return result;           
             // throw new NotImplementedException();
         }
@@ -201,15 +264,16 @@ namespace SecurityLibrary
                 }
                 else if(b3==1)
                 {
-                    return b2%26;
+                    return ((b2 % 26) + 26) % 26;
                 }
-                Console.WriteLine($"{b1} {b2} {b3}");
                 q = a3 / b3;
-                t1 = a1 - q * b1;
-                t2 = a2 - q * b2;
-                t3 = a3 - q * b3;
+                t1 = a1 - (q * b1);
+                t2 = a2 - (q * b2);
+                t3 = a3 - (q * b3);
                 a1 =b1; a2=b2; a3=b3;
                 b1=t1; b2=t2; b3=t3;
+                Console.WriteLine($"{t1} {t2} {t3}");
+
             }
             //return 0;
         }
@@ -240,10 +304,13 @@ namespace SecurityLibrary
                 }
             }
 
-            ans = sub[0] * sub[3] - sub[1] * sub[2];
-            ans %= 26;
+            ans = (sub[0] * sub[3]) - (sub[1] * sub[2]);
+            //ans %= 26;
+
             return ans;
         }
+
+        
     }
 }
 
