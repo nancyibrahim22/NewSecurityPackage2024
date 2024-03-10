@@ -12,8 +12,36 @@ namespace SecurityLibrary
 
         public List<int> Analyse(List<int> plainText, List<int> cipherText)
         {
+            List<int> key = new List<int>();
+            int k1=-1, k2=-1,k3 = -1,k4 = -1;
+            
+            for(int i=0; i<26;i++)
+            {
+              for(int j=0;j<26;j++)
+              {
+                    if(MyAnalysis(i,j,plainText,cipherText,true))
+                    {
+                        k1= i;
+                        k2= j;
+                    }
+                    if (MyAnalysis(i, j, plainText, cipherText, false))
+                    {
+                        k3 = i;
+                        k4 = j;
+                    }
+                }
+            }
 
-            throw new NotImplementedException();
+            if (k1 == -1 || k2 == -1 || k3 == -1 || k4 == -1)
+                throw new InvalidAnlysisException();
+            key.Add(k1);
+            key.Add(k2);
+            key.Add(k3);
+            key.Add(k4);
+            foreach(var mm in key)
+                Console.WriteLine(mm);
+            return key;
+            //throw new NotImplementedException();
         }
         public string Analyse(string plainText, string cipherText)
         {
@@ -237,8 +265,89 @@ namespace SecurityLibrary
 
         public List<int> Analyse3By3Key(List<int> plain3, List<int> cipher3)
         {
+            List<int> mykeys= new List<int>();
+            int step_size, det;
+            int[,] InverseKeyMatrix = new int[3, 3];
+            int[,] InverseKeyMatrixTrans = new int[3, 3];
+            step_size = 3;
 
-            throw new NotImplementedException();
+           
+                det = plain3[0] * (plain3[4] * plain3[8] - plain3[5] * plain3[7])
+                    - plain3[1] * (plain3[3] * plain3[8] - plain3[5] * plain3[6])
+                    + plain3[2] * (plain3[3] * plain3[7] - plain3[4] * plain3[6]);
+
+            
+            det = ((det % 26) + 26) % 26;
+            Console.WriteLine(det);
+            int inverse = InverseFinder(det);
+            Console.WriteLine(inverse);
+
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    int pow = i + j;
+                    if (pow % 2 == 0)
+                        pow = 1;
+                    else
+                        pow = -1;
+
+                    int detHere = getDet(plain3, i, j);
+                    // InverseKeyMatrix[i,j]=((inverse*pow*detHere)%26);
+                    int Eq = inverse * pow * detHere;
+                    InverseKeyMatrix[i, j] = ((Eq % 26) + 26) % 26;
+
+                }
+            }
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    InverseKeyMatrixTrans[i, j] = InverseKeyMatrix[j, i];
+                    Console.Write($"{InverseKeyMatrixTrans[i, j]} ");
+                }
+                Console.WriteLine();
+
+            }
+
+            ///for (int i = 0; i < cipher3.Count; i += 3)
+            ///{
+            ///    mykeys.Add((cipher3[i] * InverseKeyMatrixTrans[0, 0]
+            ///        + cipher3[i + 1] * InverseKeyMatrixTrans[1, 0]
+            ///        + cipher3[i + 2] * InverseKeyMatrixTrans[2, 0]) % 26);
+            ///
+            ///    mykeys.Add((cipher3[i] * InverseKeyMatrixTrans[0, 1]
+            ///        + cipher3[i + 1] * InverseKeyMatrixTrans[1, 1]
+            ///        + cipher3[i + 2] * InverseKeyMatrixTrans[2, 1]) % 26);
+            ///
+            ///    mykeys.Add((cipher3[i] * InverseKeyMatrixTrans[0, 2]
+            ///        + cipher3[i + 1] * InverseKeyMatrixTrans[1, 2]
+            ///        + cipher3[i + 2] * InverseKeyMatrixTrans[2, 2]) % 26);
+            ///}
+            ///
+
+            for(int i=0; i < 3;i++)
+            {
+                int z = 0;
+                //Pin Col from cipher4
+                //Pin 3 Values
+                int c1, c2, c3;
+                c1 = cipher3[0 + i];//0 1 
+                c2 = cipher3[3 + i];//3 4 
+                c3 = cipher3[6 + i];//6 7
+                for (int j=0;j<3;j++)
+                {
+                    int ans ;
+                    ans= c1 * InverseKeyMatrixTrans[j, 0]+
+                        c2*InverseKeyMatrixTrans[j,1]+
+                        c3*InverseKeyMatrixTrans[j,2];
+                    mykeys.Add(ans%26);
+                }
+            }
+            foreach (var x in mykeys)
+                Console.Write($"{x} ");
+            return mykeys;
+            //  throw new NotImplementedException();
         }
 
         public string Analyse3By3Key(string plain3, string cipher3)
@@ -310,7 +419,21 @@ namespace SecurityLibrary
             return ans;
         }
 
-        
+        public bool MyAnalysis(int x,int y, List<int> plain, List<int> cipher,bool type)
+        {
+            for(int i=0;i<plain.Count;i+=2)
+            {
+                int cc;
+                if (type)
+                    cc = cipher[i];
+                else
+                    cc = cipher[i+1];
+                if ((plain[i] * x + plain[i + 1] * y) % 26 != cc)
+                    return false;
+            }
+
+            return true;
+        }
     }
 }
 
