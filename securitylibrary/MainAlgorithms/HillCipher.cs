@@ -45,7 +45,14 @@ namespace SecurityLibrary
         }
         public string Analyse(string plainText, string cipherText)
         {
-            throw new NotImplementedException();
+            List<int> p = new List<int>();
+            p= text_to_int(plainText);
+            List<int> c = new List<int>();
+            c= text_to_int(cipherText);
+            List<int> k = new List<int>();
+            k = Analyse(p, c);
+            return int_to_text(k);
+           
         }
         
         public List<int> Decrypt(List<int> cipherText, List<int> key)
@@ -179,7 +186,13 @@ namespace SecurityLibrary
         }
         public string Decrypt(string cipherText, string key)
         {
-            throw new NotImplementedException();
+            List<int> c = new List<int>();
+            c = text_to_int(cipherText);
+            List<int> k = new List<int>();
+            k = text_to_int(key);
+            List<int> p = new List<int>();
+            p = Decrypt(c, k);
+            return int_to_text(p);
         }
 
 
@@ -259,7 +272,13 @@ namespace SecurityLibrary
         }
         public string Encrypt(string plainText, string key)
         {
-            throw new NotImplementedException();
+            List<int> c = new List<int>();
+            c = text_to_int(plainText);
+            List<int> k = new List<int>();
+            k = text_to_int(key);
+            List<int> p = new List<int>();
+            p = Encrypt(c, k);
+            return int_to_text(p);
         }
 
 
@@ -352,7 +371,13 @@ namespace SecurityLibrary
 
         public string Analyse3By3Key(string plain3, string cipher3)
         {
-            throw new NotImplementedException();
+            List<int> p = new List<int>();
+            p = text_to_int(plain3);
+            List<int> c = new List<int>();
+            c = text_to_int(cipher3);
+            List<int> k = new List<int>();
+            k = Analyse3By3Key(p, c);
+            return int_to_text(k);
         }
 
         public int InverseFinder(int determinant)
@@ -433,6 +458,38 @@ namespace SecurityLibrary
             }
 
             return true;
+        }
+
+        public List<int> text_to_int(string text)
+        {
+            text = text.ToLower();
+            List<int> ans = new List<int>();
+            foreach (char a in text)
+            {
+
+                ans.Add(a - 'a');
+
+
+            }
+
+            return ans;
+
+        }
+
+        public string int_to_text(List<int> int_stream)
+        {
+
+            string ans = "";
+            foreach (int val in int_stream)
+            {
+
+                ans += (char)(val + 'a');
+            }
+
+
+
+
+            return ans;
         }
     }
 }
