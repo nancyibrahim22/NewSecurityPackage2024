@@ -34,13 +34,13 @@ namespace SecurityLibrary.AES
                 else if (b3 == 1)
                 {
                     //Console.WriteLine(((b2 % 26) + 26) % 26);
-                    //return ((b2 % 26) + 26) % 26;
-                    Console.WriteLine(b2);
-                    if(b2<0)
-                    {
-                        return ((b2 % 26) + 26) % 26;
-                    }
-                    return b2;
+                    return ((b2 % baseN) + baseN) % baseN;
+                    //Console.WriteLine(b2);
+                    //if(b2<0)
+                    //{
+                    //    return ((b2 % 26) + 26) % 26;
+                    //}
+                    //return b2;
                 }
                 q = a3 / b3;
                 t1 = a1 - (q * b1);
