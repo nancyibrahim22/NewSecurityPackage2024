@@ -17,6 +17,10 @@ namespace SecurityLibrary.AES
             throw new NotImplementedException();
         }
 
+
+        
+
+
         public override string Encrypt(string plainText, string key)
         {
             //throw new NotImplementedException();
@@ -569,5 +573,107 @@ namespace SecurityLibrary.AES
             }
             return finalKeyMatrix;
         }
+        public string[,] InverseSubBytesKey(string[,] matrix)
+        {
+            string[,] result = new string[4, 1];
+            string[,] sbox = new string[16, 16]
+            {
+                { "52", "09", "6A", "D5", "30", "36", "A5", "38", "BF", "40", "A3", "9E", "81", "F3", "D7", "FB" },
+                { "7C", "E3", "39", "82", "9B", "2F", "FF", "87", "34", "8E", "43", "44", "C4", "DE", "E9", "CB" },
+                { "54", "7B", "94", "32", "A6", "C2", "23", "3D", "EE", "4C", "95", "0B", "42", "FA", "C3", "4E" },
+                { "08", "2E", "A1", "66", "28", "D9", "24", "B2", "76", "5B", "A2", "49", "6D", "8B", "D1", "25" },
+                { "72", "F8", "F6", "64", "86", "68", "98", "16", "D4", "A4", "5C", "CC", "5D", "65", "B6", "92" },
+                { "6C", "70", "48", "50", "FD", "ED", "B9", "DA", "5E", "15", "46", "57", "A7", "8D", "9D", "84" },
+                { "90", "D8", "AB", "00", "8C", "BC", "D3", "0A", "F7", "E4", "58", "05", "B8", "B3", "45", "06" },
+                { "D0", "2C", "1E", "8F", "CA", "3F", "0F", "02", "C1", "AF", "BD", "03", "01", "13", "8A", "6B" },
+                { "3A", "91", "11", "41", "4F", "67", "DC", "EA", "97", "F2", "CF", "CE", "F0", "B4", "E6", "73" },
+                { "96", "AC", "74", "22", "E7", "AD", "35", "85", "E2", "F9", "37", "E8", "1C", "75", "DF", "6E" },
+                { "47", "F1", "1A", "71", "1D", "29", "C5", "89", "6F", "B7", "62", "0E", "AA", "18", "BE", "1B" },
+                { "FC", "56", "3E", "4B", "C6", "D2", "79", "20", "9A", "DB", "C0", "FE", "78", "CD", "5A", "F4" },
+                { "1F", "DD", "A8", "33", "88", "07", "C7", "31", "B1", "12", "10", "59", "27", "80", "EC", "5F" },
+                { "60", "51", "7F", "A9", "19", "B5", "4A", "0D", "2D", "E5", "7A", "9F", "93", "C9", "9C", "EF" },
+                { "A0", "E0", "3B", "4D", "AE", "2A", "F5", "B0", "C8", "EB", "BB", "3C", "83", "53", "99", "61" },
+                { "17", "2B", "04", "7E", "BA", "77", "D6", "26", "E1", "69", "14", "63", "55", "21", "0C", "7D" }
+            };
+            Dictionary<char, int> hexTodecimal = new Dictionary<char, int>()
+            {
+                {'A', 10},
+                {'B', 11},
+                {'C', 12},
+                {'D', 13},
+                {'E', 14},
+                {'F', 15},
+                {'a', 10},
+                {'b', 11},
+                {'c', 12},
+                {'d', 13},
+                {'e', 14},
+                {'f', 15}
+            };
+            for (int i = 0; i < 4; i++)
+            {
+                string cell = matrix[i, 0];
+                char first_char = cell[0];
+                char second_char = cell[1];
+                if (char.IsLetter(first_char))
+                {
+                    int row = hexTodecimal[first_char];
+                    if (char.IsLetter(second_char))
+                    {
+                        int column = hexTodecimal[second_char];
+                        result[i, 0] = sbox[row, column];
+                    }
+                    else if (char.IsDigit(second_char))
+                    {
+                        int column = second_char - '0';
+                        result[i, 0] = sbox[row, column];
+                    }
+                }
+                else if (char.IsDigit(first_char))
+                {
+                    int row = first_char - '0';
+                    if (char.IsLetter(second_char))
+                    {
+                        int column = hexTodecimal[second_char];
+                        result[i, 0] = sbox[row, column];
+                    }
+                    else if (char.IsDigit(second_char))
+                    {
+                        int column = second_char - '0';
+                        result[i, 0] = sbox[row, column];
+                    }
+                }
+            }
+            return result;
+        }
+        public string[,] InverseShiftRow(string[,] subed)
+        {
+
+            string[,] result = new string[4, 4];
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    if (i == 0)
+                    {
+                        result[i, j] = subed[i, j];
+                    }
+                    else
+                    {
+                        result[i, j] = subed[i, (j - i) % 4];
+                    }
+
+                }
+            }
+
+            return result;
+
+
+        }
+
     }
+
+
+
+
 }
