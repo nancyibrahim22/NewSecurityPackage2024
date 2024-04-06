@@ -14,7 +14,7 @@ namespace SecurityLibrary.AES
     {
 		public override string  Decrypt(string cipherText, string key)
 		{
-			// throw new NotImplementedException();
+			
 			string[,] cipher_matrix = Key_to_matrix(cipherText);
 			string[,] key0 = Key_to_matrix(key);
 
@@ -29,28 +29,27 @@ namespace SecurityLibrary.AES
 			string[,] key9 = KeyExpansion(key8, 8);
 			string[,] key10 = KeyExpansion(key9, 9);
 
-			//initial round 
-			string[,] roundKey0 = InverseInitialRound(cipher_matrix, key10);
-			//string[,] roundKey0 = InverseRoundsResult(cipher_matrix, key10);
-			//round 1
+			
+			string[,] roundKey0 = InverseInitialRound(cipher_matrix, key10);		
+			
 			string[,] roundKey1 = InverseRoundsResult(roundKey0, key9);
-			//round 2
+			
 			string[,] roundKey2 = InverseRoundsResult(roundKey1, key8);
-			//round 3
+			
 			string[,] roundKey3 = InverseRoundsResult(roundKey2, key7);
-			//round 4
+			
 			string[,] roundKey4 = InverseRoundsResult(roundKey3, key6);
-			//round 5
+			
 			string[,] roundKey5 = InverseRoundsResult(roundKey4, key5);
-			//round 6
+			
 			string[,] roundKey6 = InverseRoundsResult(roundKey5, key4);
-			//round 7
+			
 			string[,] roundKey7 = InverseRoundsResult(roundKey6, key3);
-			//round 8
+			
 			string[,] roundKey8 = InverseRoundsResult(roundKey7, key2);
-			//round 9
+			
 			string[,] roundKey9 = InverseRoundsResult(roundKey8, key1);
-			//round 10
+			
 			string[,] roundKey10 = InverseLastRoundResult(roundKey9, key0);
 
 			string PlainText = MatrixToString(roundKey10);
@@ -59,7 +58,7 @@ namespace SecurityLibrary.AES
 
 		public override string Encrypt(string plainText, string key)
 		{
-			//throw new NotImplementedException();
+			
 
 			string[,] plain_matrix = Key_to_matrix(plainText);
 			string[,] key0 = Key_to_matrix(key);
@@ -76,27 +75,27 @@ namespace SecurityLibrary.AES
 			string[,] key9 = KeyExpansion(key8, 8);
 			string[,] key10 = KeyExpansion(key9, 9);
 
-			//initial round 
+			
 			string[,] roundKey0 = InitialRound(plain_matrix, key0);
-			//round 1
+			
 			string[,] roundKey1 = RoundsResult(roundKey0, key1);
-			//round 2
+			
 			string[,] roundKey2 = RoundsResult(roundKey1, key2);
-			//round 3
+			
 			string[,] roundKey3 = RoundsResult(roundKey2, key3);
-			//round 4
+			
 			string[,] roundKey4 = RoundsResult(roundKey3, key4);
-			//round 5
+			
 			string[,] roundKey5 = RoundsResult(roundKey4, key5);
-			//round 6
+			
 			string[,] roundKey6 = RoundsResult(roundKey5, key6);
-			//round 7
+			
 			string[,] roundKey7 = RoundsResult(roundKey6, key7);
-			//round 8
+			
 			string[,] roundKey8 = RoundsResult(roundKey7, key8);
-			//round 9
+			
 			string[,] roundKey9 = RoundsResult(roundKey8, key9);
-			//round 10
+			
 			string[,] roundKey10 = LastRoundResult(roundKey9, key10);
 
 			string cipherText = MatrixToString(roundKey10);
@@ -203,231 +202,51 @@ namespace SecurityLibrary.AES
 			{
 
 				string s1 = "", s2 = "", s3 = "";
-				//Console.Write($"My {hexa_bin} ");
+				
 				s1 = MultiplyTwo(hexa_bin);
 				s2 = MultiplyTwo(s1);
 				s3 = MultiplyTwo(s2);
-				//Console.Write($"Orginal: {hexa_bin} Multby8: {s3}  result : ");
+				
 				result = XORKeyMixColumns(s3, hexa_bin);
-				//Console.WriteLine(result);
+				
 			}
 			else if (hexa_row == "0D")
 			{
-				#region Comment
-				//	for (int i = 0; i < 3; i++)
-				//	{
-				//		if (hexa_bin[0] == '0')
-				//		{
-				//			for (int j = 1; j < 8; j++)
-				//			{
-				//				result += hexa_bin[j];
-				//			}
-				//			result += '0';
-				//		}
-				//		else
-				//		{
-				//			string cell_bin_02_after_multi = "";
-				//			for (int j = 1; j < 8; j++)
-				//			{
-				//				cell_bin_02_after_multi += hexa_bin[j];
-				//			}
-				//			cell_bin_02_after_multi += '0';
-				//			string bin_1B = FromHexToBin("1B");
-				//			result = XORKeyMixColumns(bin_1B, cell_bin_02_after_multi);
-				//		}
-				//	}
-
-				//	string result1 = XORKeyMixColumns(result, hexa_bin);
-
-				//             result = "";
-
-				//             for (int i = 0; i < 2; i++)
-				//             {
-				//                 if (hexa_bin[0] == '0')
-				//                 {
-				//                     for (int j = 1; j < 8; j++)
-				//                     {
-				//                         result += hexa_bin[j];
-				//                     }
-				//                     result += '0';
-				//                 }
-				//                 else
-				//                 {
-				//                     string cell_bin_02_after_multi = "";
-				//                     for (int j = 1; j < 8; j++)
-				//                     {
-				//                         cell_bin_02_after_multi += hexa_bin[j];
-				//                     }
-				//                     cell_bin_02_after_multi += '0';
-				//                     string bin_1B = FromHexToBin("1B");
-				//                     result = XORKeyMixColumns(bin_1B, cell_bin_02_after_multi);
-				//                 } 
-				//             }
-
-				//             result = XORKeyMixColumns(result, result1);
-
-				//}
-				//         else if(hexa_row=="0E")
-				//         {
-				//             for (int i = 0; i < 3; i++)
-				//             {
-				//                 if (hexa_bin[0] == '0')
-				//                 {
-				//                     for (int j = 1; j < 8; j++)
-				//                     {
-				//                         result += hexa_bin[j];
-				//                     }
-				//                     result += '0';
-				//                 }
-				//                 else
-				//                 {
-				//                     string cell_bin_02_after_multi = "";
-				//                     for (int j = 1; j < 8; j++)
-				//                     {
-				//                         cell_bin_02_after_multi += hexa_bin[j];
-				//                     }
-				//                     cell_bin_02_after_multi += '0';
-				//                     string bin_1B = FromHexToBin("1B");
-				//                     result = XORKeyMixColumns(bin_1B, cell_bin_02_after_multi);
-				//                 } 
-				//             }
-
-				//             string result2="";
-
-				//	for (int i = 0; i < 2; i++)
-				//	{
-				//		if (hexa_bin[0] == '0')
-				//		{
-				//			for (int j = 1; j < 8; j++)
-				//			{
-				//				result2 += hexa_bin[j];
-				//			}
-				//			result2 += '0';
-				//		}
-				//		else
-				//		{
-				//			string cell_bin_02_after_multi = "";
-				//			for (int j = 1; j < 8; j++)
-				//			{
-				//				cell_bin_02_after_multi += hexa_bin[j];
-				//			}
-				//			cell_bin_02_after_multi += '0';
-				//			string bin_1B = FromHexToBin("1B");
-				//			result2 = XORKeyMixColumns(bin_1B, cell_bin_02_after_multi);
-				//		}
-				//	}
-
-				//	string result3 = XORKeyMixColumns(result, result2);
-
-				//             #region Last Xor
-				//             string result4 = "";
-				//	if (hexa_bin[0] == '0')
-				//             {
-				//                 for (int j = 1; j < 8; j++)
-				//                 {
-				//                     result4 += hexa_bin[j];
-				//                 }
-				//                 result4 += '0';
-				//             }
-				//             else
-				//             {
-				//                 string cell_bin_02_after_multi = "";
-				//                 for (int j = 1; j < 8; j++)
-				//                 {
-				//                     cell_bin_02_after_multi += hexa_bin[j];
-				//                 }
-				//                 cell_bin_02_after_multi += '0';
-				//                 string bin_1B = FromHexToBin("1B");
-				//                 result4 = XORKeyMixColumns(bin_1B, cell_bin_02_after_multi);
-				//             } 
-				//             #endregion
-
-				//             result = XORKeyMixColumns(result4, result3); 
-				#endregion
+				
 
 				string s11 = "", s12 = "", s13 = "", s21 = "", s22 = "", s23 = "", s24 = "", s25 = "";
-				s11 = MultiplyTwo(hexa_bin);//2
-				s12 = MultiplyTwo(s11);//4
-				s13 = MultiplyTwo(s12);//8
+				s11 = MultiplyTwo(hexa_bin);
+				s12 = MultiplyTwo(s11);
+				s13 = MultiplyTwo(s12);
 
 
 				string resultInitial = XORKeyMixColumns(s13, s12);
 
 				result = XORKeyMixColumns(resultInitial, hexa_bin);
-				//Console.WriteLine($"before :{hexa_bin} After :{result} ");
-				//Console.WriteLine($"s13 :{s13} s21 :{s21}");
+				
 
 			}
 			else if (hexa_row == "0B")
 			{
-				#region Cooment
-				//for (int i = 0; i < 3; i++)
-				//{
-				//	if (hexa_bin[0] == '0')
-				//	{
-				//		for (int j = 1; j < 8; j++)
-				//		{
-				//			result += hexa_bin[j];
-				//		}
-				//		result += '0';
-				//	}
-				//	else
-				//	{
-				//		string cell_bin_02_after_multi = "";
-				//		for (int j = 1; j < 8; j++)
-				//		{
-				//			cell_bin_02_after_multi += hexa_bin[j];
-				//		}
-				//		cell_bin_02_after_multi += '0';
-				//		string bin_1B = FromHexToBin("1B");
-				//		result = XORKeyMixColumns(bin_1B, cell_bin_02_after_multi);
-				//	}
-				//}
-
-				//#region Last Xor
-				//string result4 = "";
-				//if (hexa_bin[0] == '0')
-				//{
-				//	for (int j = 1; j < 8; j++)
-				//	{
-				//		result4 += hexa_bin[j];
-				//	}
-				//	result4 += '0';
-				//}
-				//else
-				//{
-				//	string cell_bin_02_after_multi = "";
-				//	for (int j = 1; j < 8; j++)
-				//	{
-				//		cell_bin_02_after_multi += hexa_bin[j];
-				//	}
-				//	cell_bin_02_after_multi += '0';
-				//	string bin_1B = FromHexToBin("1B");
-				//	result4 = XORKeyMixColumns(bin_1B, cell_bin_02_after_multi);
-				//}
-				//#endregion
-
-				//result = XORKeyMixColumns(result4, result); 
-				#endregion
+				
 
 				string s11 = "", s12 = "", s13 = "", s21 = "", s14 = "", s15;
-				s11 = MultiplyTwo(hexa_bin);// 2
-				s12 = MultiplyTwo(s11);// 4 
-				s13 = MultiplyTwo(s12);// 8
+				s11 = MultiplyTwo(hexa_bin);
+				s12 = MultiplyTwo(s11);
+				s13 = MultiplyTwo(s12);
 
 				s14 = XORKeyMixColumns(s13, hexa_bin);
 
 				result = XORKeyMixColumns(s14, s11);
 
 
-				//Console.WriteLine($"before :{hexa_bin} After :{result} ");
 			}
 			else if (hexa_row == "0E")
 			{
 				string s11 = "", s12 = "", s13 = "", s21 = "", s22 = "", s31 = "";
-				s11 = MultiplyTwo(hexa_bin);//sec
-				s12 = MultiplyTwo(s11);//third
-				s13 = MultiplyTwo(s12);//fourth
+				s11 = MultiplyTwo(hexa_bin);
+				s12 = MultiplyTwo(s11);
+				s13 = MultiplyTwo(s12);
 
 				string resultInitial = XORKeyMixColumns(s13, s12);
 				string resultInitial2 = XORKeyMixColumns(resultInitial, s11);
@@ -558,9 +377,7 @@ namespace SecurityLibrary.AES
 		public string[,] InverseInitialRound(string[,] cipher_text_matrix, string[,] key_matrix)
 		{
 			string[,] roundKey = AddRoundKey(cipher_text_matrix, key_matrix);			
-			//string[,] mixColumns = InverseMixColumn(roundKey);
-			//string[,] shiftedRows = InverseShiftRow(roundKey);
-			//string[,] sub = InverseSubBytesRounds(shiftedRows);
+			
 
 			return roundKey;
 		}
@@ -784,13 +601,13 @@ namespace SecurityLibrary.AES
 				{"00", "00", "00", "00", "00", "00", "00", "00", "00", "00"},
 				{"00", "00", "00", "00", "00", "00", "00", "00", "00", "00"}
 			};
-			//rotate last column in prev_key_matrix
+			
 			string[,] rotated_prev_last_column = RotateLastColumn(prev_key_matrix);
 
-			//subbytes the rotated column
+			
 			string[,] subBytes_prev_last_column = SubBytesKey(rotated_prev_last_column);
 
-			//XOR subbyte rotated column with prev first column
+			
 			string[,] prev_first_column = new string[4, 1];
 			for (int i = 0; i < 4; i++)
 			{
@@ -798,7 +615,7 @@ namespace SecurityLibrary.AES
 			}
 			string[,] first_xor_rotated = XORKey(subBytes_prev_last_column, prev_first_column);
 
-			//XOR prev_xor_result with 
+			
 			string[,] ExpansionMatrixColumn = new string[4, 1];
 			for (int i = 0; i < 4; i++)
 			{
@@ -806,28 +623,28 @@ namespace SecurityLibrary.AES
 			}
 			string[,] new_first_column = XORKey(first_xor_rotated, ExpansionMatrixColumn);
 
-			//second column: xor new_first_column with prev_second_column
+			
 			for (int i = 0; i < 4; i++)
 			{
 				prev_second_column[i, 0] = prev_key_matrix[i, 1];
 			}
 			string[,] new_second_column = XORKey(new_first_column, prev_second_column);
 
-			//third column: xor new_second_column with prev_third_column
+			
 			for (int i = 0; i < 4; i++)
 			{
 				prev_third_column[i, 0] = prev_key_matrix[i, 2];
 			}
 			string[,] new_third_column = XORKey(new_second_column, prev_third_column);
 
-			//forth column: xor new_third_column with prev_forth_column
+			
 			for (int i = 0; i < 4; i++)
 			{
 				prev_forth_column[i, 0] = prev_key_matrix[i, 3];
 			}
 			string[,] new_forth_column = XORKey(new_third_column, prev_forth_column);
 
-			//final matrix
+			
 			for (int i = 0; i < 4; i++)
 			{
 				for (int j = 0; j < 4; j++)
@@ -1013,10 +830,7 @@ namespace SecurityLibrary.AES
 
 		public string[,] InverseRoundsResult(string[,] prev_result, string[,] current_key)
 		{
-			///string[,] sub = SubBytesRounds(prev_result);
-			///string[,] shiftedRows = shiftRow(sub);
-			///string[,] mixColumns = mixColumn(shiftedRows);
-			///string[,] roundKey = AddRoundKey(mixColumns, current_key);
+			
 
 			string[,] shiftedRows = InverseShiftRow(prev_result);
 			string[,] sub = InverseSubBytesRounds(shiftedRows);
@@ -1027,15 +841,12 @@ namespace SecurityLibrary.AES
 
 		public string[,] InverseLastRoundResult(string[,] prev_result, string[,] current_key)
 		{
-			///string[,] sub = SubBytesRounds(prev_result);
-			///string[,] shiftedRows = shiftRow(sub);
-			///string[,] roundKey = AddRoundKey(shiftedRows, current_key);
-			///return roundKey;
+			
 
 			string[,] shiftedRows = InverseShiftRow(prev_result);
 			string[,] sub = InverseSubBytesRounds(shiftedRows);
 			string[,] roundKey = AddRoundKey(sub, current_key);
-			//string[,] mixColumns = InverseMixColumn(roundKey);
+			
 
 			return roundKey;
 		}
