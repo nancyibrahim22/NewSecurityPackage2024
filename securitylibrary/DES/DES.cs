@@ -13,7 +13,50 @@ namespace SecurityLibrary.DES
     {
         public override string Decrypt(string cipherText, string key)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            string[] all_keys = KeyExpansion(key);
+            string bin_cipher_txt = FromHexToBin(cipherText);
+            string cipher_ip = CipherTxtAfterIP(bin_cipher_txt);
+            string[] splitted_cipher = SplitKey(cipher_ip);
+            string l16 = splitted_cipher[0];
+            string r16 = splitted_cipher[1];
+            string l15 = r16;
+            string r15 = XORKeyWithE(l16, FunRandK(r16, all_keys, 16));
+            string l14 = r15;
+            string r14 = XORKeyWithE(l15, FunRandK(r15, all_keys, 15));
+            string l13 = r14;
+            string r13 = XORKeyWithE(l14, FunRandK(r14, all_keys, 14));
+            string l12 = r13;
+            string r12 = XORKeyWithE(l13, FunRandK(r13, all_keys, 13));
+            string l11 = r12;
+            string r11 = XORKeyWithE(l12, FunRandK(r12, all_keys, 12));
+            string l10 = r11;
+            string r10 = XORKeyWithE(l11, FunRandK(r11, all_keys, 11));
+            string l9 = r10;
+            string r9 = XORKeyWithE(l10, FunRandK(r10, all_keys, 10));
+            string l8 = r9;
+            string r8 = XORKeyWithE(l9, FunRandK(r9, all_keys, 9));
+            string l7 = r8;
+            string r7 = XORKeyWithE(l8, FunRandK(r8, all_keys, 8));
+            string l6 = r7;
+            string r6 = XORKeyWithE(l7, FunRandK(r7, all_keys, 7));
+            string l5 = r6;
+            string r5 = XORKeyWithE(l6, FunRandK(r6, all_keys, 6));
+            string l4 = r5;
+            string r4 = XORKeyWithE(l5, FunRandK(r5, all_keys, 5));
+            string l3 = r4;
+            string r3 = XORKeyWithE(l4, FunRandK(r4, all_keys, 4));
+            string l2 = r3;
+            string r2 = XORKeyWithE(l3, FunRandK(r3, all_keys, 3));
+            string l1 = r2;
+            string r1 = XORKeyWithE(l2, FunRandK(r2, all_keys, 2));
+            string l0 = r1;
+            string r0 = XORKeyWithE(l1, FunRandK(r1, all_keys, 1));
+            string randl = r0 + "" + l0;
+
+            string res = ResAfterIPInverse(randl);
+            string res_hexa = FromBinToHex(res);
+            return res_hexa;
         }
 
         public override string Encrypt(string plainText, string key)
@@ -305,6 +348,21 @@ namespace SecurityLibrary.DES
             foreach (int i in ip)
             {
                 char character = plain_txt[i - 1];
+                res += character;
+            }
+            return res;
+        }
+
+        public string CipherTxtAfterIP(string cipher_txt)
+        {
+            string res = "";
+            int[] ip = {58,50,42,34,26,18,10,2,60,52,44,36,28,20,12,4,62,
+                54,46,38,30,22,14,6,64,56,48,40,32,24,16,8,57,
+                49,41,33,25,17,9,1,59,51,43,35,27,19,11,3,61,
+                53,45,37,29,21,13,5,63,55,47,39,31,23,15,7};
+            foreach (int i in ip)
+            {
+                char character = cipher_txt[i - 1];
                 res += character;
             }
             return res;
